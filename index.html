@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Freelance Rate &amp; Project Quote Calculator — Real Hourly Rate, Day Rate &amp; 3-Tier Quotes</title>
+<meta name="description" content="Free freelance rate calculator. Enter your take-home target, tax rate, billable hours and fixed costs to get your real hourly rate, day rate, monthly revenue target and three package quotes. No sign-up, works offline.">
+<link rel="canonical" href="https://gkdlwjavm9-cpu.github.io/freelance-rate-calculator/">
+<meta property="og:title" content="Freelance Rate &amp; Project Quote Calculator">
+<meta property="og:description" content="What must an hour earn? Get your real hourly rate, day rate and three package quotes in one screen.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#4f46e5">
+<style>
+:root{
+  --bg:#f6f7fb; --panel:#ffffff; --panel-2:#f8fafc; --ink:#0f172a; --ink-2:#334155;
+  --muted:#64748b; --line:#e2e8f0; --line-2:#eef2f7;
+  --accent:#4f46e5; --accent-2:#6366f1; --accent-soft:#eef2ff; --accent-ink:#4338ca;
+  --good:#0f9d76; --good-soft:#ecfdf5; --warn:#b45309;
+  --shadow:0 1px 2px rgba(15,23,42,.06),0 12px 32px -12px rgba(15,23,42,.18);
+  --radius:16px;
+}
+html[data-theme="dark"]{
+  --bg:#0b1120; --panel:#111a2e; --panel-2:#0f172a; --ink:#f1f5f9; --ink-2:#cbd5e1;
+  --muted:#94a3b8; --line:#1f2c44; --line-2:#17233a;
+  --accent:#818cf8; --accent-2:#6366f1; --accent-soft:#1e1b4b; --accent-ink:#c7d2fe;
+  --good:#34d399; --good-soft:#0b2b24; --warn:#fbbf24;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 18px 40px -18px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); font-size:16px; line-height:1.55;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header.top{
+  position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:saturate(140%) blur(10px); border-bottom:1px solid var(--line);
+}
+header.top .wrap{display:flex;align-items:center;gap:14px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.2px}
+.brand .dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#22d3ee);
+  display:grid;place-items:center;color:#fff;font-size:13px;font-weight:900}
+.spacer{flex:1}
+.ghost{
+  border:1px solid var(--line);background:var(--panel);color:var(--ink-2);
+  border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px
+}
+.ghost:hover{border-color:var(--accent);color:var(--accent)}
+h1{font-size:clamp(28px,4.4vw,46px);line-height:1.1;letter-spacing:-1.2px;margin:34px 0 12px}
+.lede{font-size:clamp(15px,1.7vw,19px);color:var(--muted);max-width:720px;margin:0 0 22px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+.badge{font-size:12px;font-weight:700;color:var(--accent-ink);background:var(--accent-soft);
+  border:1px solid color-mix(in srgb,var(--accent) 24%,transparent);border-radius:999px;padding:5px 11px}
+.adslot{
+  border:1px dashed var(--line);background:var(--panel-2);color:var(--muted);
+  border-radius:12px;padding:14px;text-align:center;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;margin:22px 0;
+}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:18px;align-items:start}
+@media(max-width:900px){.calc{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.card h2{font-size:15px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 16px}
+.presets{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+.preset{
+  font-size:12.5px;font-weight:650;border:1px solid var(--line);background:var(--panel-2);
+  color:var(--ink-2);border-radius:999px;padding:7px 12px;cursor:pointer
+}
+.preset:hover{border-color:var(--accent);color:var(--accent)}
+.preset.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.field{display:grid;grid-template-columns:1fr 132px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line-2)}
+.field:last-of-type{border-bottom:0}
+.field label{font-size:14px;color:var(--ink-2)}
+.field .hint{display:block;font-size:11.5px;color:var(--muted);margin-top:1px}
+.inp{position:relative;display:flex;align-items:center}
+.inp .sym{position:absolute;left:10px;font-size:14px;color:var(--muted);pointer-events:none}
+.inp input,.inp select{
+  width:100%;padding:9px 10px 9px 24px;border:1px solid var(--line);border-radius:10px;
+  background:var(--panel-2);color:var(--ink);font-size:15px;font-weight:650;text-align:right;
+  font-variant-numeric:tabular-nums;appearance:none
+}
+.inp.no-sym input{padding-left:10px}
+.inp input:focus,.inp select:focus{outline:2px solid color-mix(in srgb,var(--accent) 45%,transparent);border-color:var(--accent)}
+.inp select{text-align:left;padding-left:12px}
+.hero-num{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+#out-hourly{font-size:clamp(40px,7vw,64px);font-weight:850;letter-spacing:-2px;line-height:1;
+  color:var(--accent);font-variant-numeric:tabular-nums}
+.hero-num .unit{font-size:15px;color:var(--muted);font-weight:600;padding-bottom:8px}
+.quote-hint{font-size:13.5px;color:var(--muted);margin-top:8px}
+.quote-hint b{color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+@media(max-width:520px){.tiles{grid-template-columns:1fr 1fr}}
+.tile{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+.tile .k{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.tile .v{font-size:20px;font-weight:800;letter-spacing:-.6px;font-variant-numeric:tabular-nums;margin-top:2px}
+.tile .s{font-size:11.5px;color:var(--muted)}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:640px){.tiers{grid-template-columns:1fr}}
+.tier{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--panel-2);position:relative}
+.tier.mid{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent) inset}
+.tier .name{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tier.mid .name{color:var(--accent-ink)}
+.tier .price{font-size:26px;font-weight:850;letter-spacing:-1px;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.tier .meta{font-size:12px;color:var(--muted);line-height:1.45}
+.tier .meta b{color:var(--ink-2);font-variant-numeric:tabular-nums}
+.tier .tag{position:absolute;top:-9px;right:12px;background:var(--accent);color:#fff;font-size:10px;
+  font-weight:800;letter-spacing:.08em;padding:3px 8px;border-radius:999px}
+.sens{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.sens h3{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 8px}
+.sens table{width:100%;border-collapse:collapse;font-size:13px}
+.sens td{padding:4px 0;color:var(--ink-2)}
+.sens td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.row-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.btn{border:0;border-radius:11px;padding:11px 16px;font-size:14px;font-weight:750;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-ink)}
+.btn-ghost{background:transparent;color:var(--ink-2);border:1px solid var(--line)}
+.how{margin:40px 0 0}
+.how h2{font-size:22px;letter-spacing:-.5px;margin:0 0 14px}
+.how ol{margin:0;padding-left:20px;color:var(--ink-2)}
+.how li{margin:8px 0}
+.cta{
+  margin:34px 0;border-radius:20px;padding:26px;color:#fff;
+  background:linear-gradient(135deg,#4f46e5,#312e81 60%,#0f172a);
+  box-shadow:0 18px 40px -20px rgba(79,70,229,.8)
+}
+.cta h2{margin:0 0 6px;font-size:clamp(19px,2.6vw,26px);letter-spacing:-.6px}
+.cta p{margin:0 0 16px;color:#c7d2fe;font-size:15px;max-width:640px}
+.cta a.cta-btn{
+  display:inline-block;background:#fff;color:#312e81;border-radius:12px;padding:13px 20px;
+  font-weight:800;font-size:15px;text-decoration:none
+}
+.cta a.cta-btn:hover{background:#eef2ff}
+.cta .code{display:inline-block;margin-left:10px;font-size:13px;color:#c7d2fe}
+.cta .code b{background:rgba(255,255,255,.14);border-radius:6px;padding:2px 7px;letter-spacing:.06em}
+footer{border-top:1px solid var(--line);margin-top:20px;padding:22px 0 40px;color:var(--muted);font-size:12.5px}
+#toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:11px;font-size:13.5px;
+  font-weight:650;transition:.22s ease;z-index:50;max-width:90vw;text-align:center
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><span class="dot">F</span><span>Freelance Rate Kit</span></div>
+    <span class="spacer"></span>
+    <button class="ghost" id="theme-toggle" type="button" aria-label="Switch theme">🌙 Dark</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>What must your hour actually earn?</h1>
+  <p class="lede">Put in the take-home pay you want, the tax you owe and the hours you can honestly bill.
+     You get your real hourly rate, a day rate, the revenue you must invoice each month and three package quotes you can send today.</p>
+  <div class="badges">
+    <span class="badge">No sign-up</span>
+    <span class="badge">Works offline</span>
+    <span class="badge">Nothing leaves your browser</span>
+    <span class="badge">8 freelancer presets</span>
+  </div>
+
+  <div class="adslot" aria-hidden="true">Advertisement</div>
+
+  <section class="calc">
+    <div class="card">
+      <h2>Your numbers</h2>
+      <div class="presets" id="presets"></div>
+
+      <div class="field">
+        <label for="in-target">Take-home pay you want (per year)
+          <span class="hint">After tax and after business costs</span></label>
+        <div class="inp"><span class="sym" id="sym-target">$</span>
+          <input id="in-target" type="number" inputmode="numeric" min="0" step="1000" value="80000"></div>
+      </div>
+      <div class="field">
+        <label for="in-tax">Tax + self-employment rate
+          <span class="hint">Blended income tax and social contributions</span></label>
+        <div class="inp"><span class="sym">%</span>
+          <input id="in-tax" type="number" inputmode="decimal" min="0" max="90" step="1" value="25"></div>
+      </div>
+      <div class="field">
+        <label for="in-hours">Billable hours per week
+          <span class="hint">Only hours a client pays for — not admin or sales</span></label>
+        <div class="inp no-sym">
+          <input id="in-hours" type="number" inputmode="decimal" min="1" max="80" step="1" value="25"></div>
+      </div>
+      <div class="field">
+        <label for="in-weeks">Weeks off per year
+          <span class="hint">Vacation, public holidays, sick days</span></label>
+        <div class="inp no-sym">
+          <input id="in-weeks" type="number" inputmode="decimal" min="0" max="30" step="0.5" value="5"></div>
+      </div>
+      <div class="field">
+        <label for="in-costs">Fixed business costs (per month)
+          <span class="hint">Software, insurance, equipment, accounting</span></label>
+        <div class="inp"><span class="sym" id="sym-costs">$</span>
+          <input id="in-costs" type="number" inputmode="numeric" min="0" step="50" value="1000"></div>
+      </div>
+      <div class="field">
+        <label for="in-dayhours">Billable hours in a day
+          <span class="hint">A real billable day is usually 6–8 hours</span></label>
+        <div class="inp no-sym">
+          <input id="in-dayhours" type="number" inputmode="decimal" min="1" max="16" step="0.5" value="8"></div>
+      </div>
+      <div class="field">
+        <label for="in-project">Project size (hours)
+          <span class="hint">Rough estimate for the project you are quoting</span></label>
+        <div class="inp no-sym">
+          <input id="in-project" type="number" inputmode="decimal" min="1" max="2000" step="1" value="40"></div>
+      </div>
+      <div class="field">
+        <label for="cur">Currency symbol
+          <span class="hint">Display only — no conversion</span></label>
+        <div class="inp no-sym">
+          <select id="cur" aria-label="Currency symbol">
+            <option value="USD" selected>US $</option>
+            <option value="EUR">Euro €</option>
+            <option value="GBP">Pound £</option>
+            <option value="AUD">Aus $</option>
+            <option value="CAD">Can $</option>
+          </select></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>What to charge</h2>
+      <div class="hero-num">
+        <span id="out-hourly">$104.40</span><span class="unit">/ hour — real minimum</span>
+      </div>
+      <div class="quote-hint" id="quote-hint" aria-live="polite"></div>
+
+      <div class="tiles">
+        <div class="tile"><div class="k">Day rate</div><div class="v" id="out-day">$835</div>
+          <div class="s" id="out-day-sub">8 h × your rate</div></div>
+        <div class="tile"><div class="k">Monthly target</div><div class="v" id="out-monthly">$10,222</div>
+          <div class="s" id="out-monthly-sub">revenue, not profit</div></div>
+        <div class="tile"><div class="k">Billable hours</div><div class="v" id="out-hours">1,175</div>
+          <div class="s" id="out-hours-sub">a year · 47 weeks</div></div>
+      </div>
+
+      <h3 style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:20px 0 0">
+        Project quote · <span id="out-proj-hours">40</span> hours</h3>
+      <div class="tiers" id="tiers"></div>
+
+      <div class="sens">
+        <h3>If you bill less than planned</h3>
+        <table><tbody id="sens-rows"></tbody></table>
+      </div>
+
+      <div class="row-actions">
+        <button class="btn btn-primary" id="copy-btn" type="button">Copy my numbers</button>
+        <button class="btn btn-ghost" id="reset-btn" type="button">Reset</button>
+      </div>
+      <p style="font-size:11.5px;color:var(--muted);margin:12px 0 0">
+        Saved in this browser only. Estimates — not tax or legal advice.</p>
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>How the maths works</h2>
+    <ol>
+      <li><b>Billable hours a year</b> = billable hours a week × (52 − weeks off).</li>
+      <li><b>Revenue you must invoice</b> = (take-home target + fixed costs) ÷ (1 − tax rate).</li>
+      <li><b>Real hourly rate</b> = that revenue ÷ billable hours a year. Below it you are paying to work.</li>
+      <li><b>Quote</b> a little above it — the hint above adds a 15% safety margin for scope creep and unpaid invoices.</li>
+      <li><b>Three packages</b> use the same rate at 60% / 100% / 130% of the project hours, with a 15% priority premium on Premium.</li>
+    </ol>
+  </section>
+
+  <div class="adslot" aria-hidden="true">Advertisement</div>
+
+  <section class="cta">
+    <h2>Need the full Project Quote Builder + Tax Ledger + Invoice Kit?</h2>
+    <p>This page gives you the rate. The Excel kit gives you the rest: a task-by-task quote builder with a risk buffer,
+       three package prices with deposits and a discount floor, a 50-row income &amp; tax ledger with a monthly summary,
+       and a print-ready invoice. Live formulas — Excel, Google Sheets or Numbers.</p>
+    <a class="cta-btn" id="gumroad-link" href="https://rwg4002.gumroad.com/l/freelance-rate-quote-kit"
+       target="_blank" rel="noopener">Get the Excel kit — $14 →</a>
+    <span class="code">Launch code <b>LAUNCH25</b> — 25% off at checkout</span>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Free freelance rate &amp; project quote calculator. No account, no tracking script, no API calls — everything runs in this page and saves to your own browser.</p>
+</footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* PURE_LOGIC_START */
+var PRESETS = [
+  {key:"webdev",  name:"Web Developer",        target:90000,  tax:27, hours:26, weeks:5, costs:1100, day:8, project:60},
+  {key:"uiux",    name:"UI/UX Designer",       target:80000,  tax:25, hours:24, weeks:6, costs:900,  day:8, project:50},
+  {key:"video",   name:"Video Editor",         target:65000,  tax:22, hours:28, weeks:5, costs:800,  day:8, project:30},
+  {key:"copy",    name:"Copywriter",           target:70000,  tax:25, hours:22, weeks:6, costs:450,  day:6, project:20},
+  {key:"data",    name:"Data Analyst",         target:95000,  tax:28, hours:24, weeks:5, costs:1200, day:8, project:45},
+  {key:"ai",      name:"AI Automation Consultant", target:120000, tax:30, hours:22, weeks:6, costs:1500, day:8, project:40},
+  {key:"motion",  name:"Motion Designer",      target:75000,  tax:24, hours:25, weeks:5, costs:1000, day:7, project:35},
+  {key:"social",  name:"Social Media Manager", target:60000,  tax:22, hours:26, weeks:5, costs:400,  day:8, project:25}
+];
+
+var CURRENCIES = {USD:"$", EUR:"€", GBP:"£", AUD:"A$", CAD:"C$"};
+var SAFETY = 0.15;        // margin shown on the quote hint
+var PRIORITY = 1.15;      // premium tier multiplier
+var SCOPE = {basic:0.60, standard:1.00, premium:1.30};
+var STORE_KEY = "freelance-rate-calc-v1";
+var DEFAULTS = {target:80000, tax:25, hours:25, weeks:5, costs:1000, day:8, project:40, cur:"USD", preset:"", theme:""};
+
+function clamp(v, lo, hi){
+  if (v !== v) return lo;            // NaN guard
+  return Math.min(hi, Math.max(lo, v));
+}
+
+function num(raw, fallback){
+  var v = parseFloat(String(raw).replace(/[^0-9.\-]/g, ""));
+  return (v === v && isFinite(v)) ? v : fallback;
+}
+
+function roundUpTo(v, step){
+  if (!(v > 0)) return 0;
+  return Math.ceil(v / step - 1e-9) * step;
+}
+
+/* Core model. Returns every number the page shows. */
+function computeModel(i){
+  var taxRate = clamp(i.tax, 0, 90) / 100;
+  var hoursWeek = clamp(i.hours, 0.5, 80);
+  var weeksOff = clamp(i.weeks, 0, 40);
+  var weeks = Math.max(1, 52 - weeksOff);
+  var hoursYear = hoursWeek * weeks;
+  var fixedYear = clamp(i.costs, 0, 1e9) * 12;
+  var target = clamp(i.target, 0, 1e9);
+  var gross = (target + fixedYear) / (1 - taxRate);
+  var hourly = gross / hoursYear;
+  var marginHourly = hourly * (1 + SAFETY);
+  var dayRate = hourly * clamp(i.day, 0.5, 24);
+  return {
+    taxRate: taxRate,
+    weeks: weeks,
+    hoursWeek: hoursWeek,
+    hoursYear: hoursYear,
+    fixedYear: fixedYear,
+    target: target,
+    gross: gross,
+    monthly: gross / 12,
+    hourly: hourly,
+    marginHourly: marginHourly,
+    dayRate: dayRate,
+    weekly: gross / weeks
+  };
+}
+
+function tierQuote(model, projectHours){
+  var h = clamp(projectHours, 0.5, 5000);
+  function tier(scope, priority){
+    var hours = h * scope;
+    var rate = model.hourly * priority;
+    var raw = hours * rate;
+    var price = roundUpTo(raw, 50);
+    return {hours:hours, rate:rate, price:price, deposit:price / 2};
+  }
+  return {
+    basic: tier(SCOPE.basic, 1),
+    standard: tier(SCOPE.standard, 1),
+    premium: tier(SCOPE.premium, PRIORITY)
+  };
+}
+
+function fmtMoney(v, cur){
+  var sym = CURRENCIES[cur] || "$";
+  var n = Math.round(v);
+  return sym + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function fmtRate(v, cur){
+  var sym = CURRENCIES[cur] || "$";
+  var n = (Math.round(v * 100) / 100).toFixed(2);
+  var parts = n.split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return sym + parts.join(".");
+}
+
+function fmtHours(v){
+  var n = Math.round(v * 10) / 10;
+  var s = (n % 1 === 0) ? String(n) : n.toFixed(1);
+  var parts = s.split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+}
+
+function summaryText(i, model, tiers, cur){
+  var L = [];
+  L.push("Freelance rate — my numbers");
+  L.push("Take-home target: " + fmtMoney(model.target, cur) + " / year");
+  L.push("Billable hours: " + fmtHours(model.hoursWeek) + " / week × " + fmtHours(model.weeks) + " weeks = " + fmtHours(model.hoursYear) + " h / year");
+  L.push("Revenue to invoice: " + fmtMoney(model.gross, cur) + " / year (" + fmtMoney(model.monthly, cur) + " / month)");
+  L.push("Real hourly rate: " + fmtRate(model.hourly, cur) + "  ·  day rate: " + fmtMoney(model.dayRate, cur));
+  L.push("Quote at: " + fmtMoney(model.marginHourly, cur) + " / hour (+15% safety margin)");
+  L.push("Project (" + fmtHours(i.project) + " h): Basic " + fmtMoney(tiers.basic.price, cur) +
+         " · Standard " + fmtMoney(tiers.standard.price, cur) + " · Premium " + fmtMoney(tiers.premium.price, cur));
+  return L.join("\n");
+}
+/* PURE_LOGIC_END */
+
+(function(){
+  if (typeof document === "undefined" || !document.getElementById) return;
+
+  var state = {
+    target: DEFAULTS.target, tax: DEFAULTS.tax, hours: DEFAULTS.hours, weeks: DEFAULTS.weeks,
+    costs: DEFAULTS.costs, day: DEFAULTS.day, project: DEFAULTS.project,
+    cur: DEFAULTS.cur, preset: DEFAULTS.preset
+  };
+  var toastTimer = null;
+
+  function $(id){ return document.getElementById(id); }
+
+  function toast(msg){
+    var t = $("toast");
+    if (!t) return;
+    t.textContent = msg;
+    t.className = "show";
+    if (typeof setTimeout === "function") {
+      if (toastTimer && typeof clearTimeout === "function") clearTimeout(toastTimer);
+      toastTimer = setTimeout(function(){ t.className = ""; }, 2600);
+    }
+  }
+
+  function readInputs(){
+    state.target = clamp(num($("in-target").value, DEFAULTS.target), 0, 1e9);
+    state.tax = clamp(num($("in-tax").value, DEFAULTS.tax), 0, 90);
+    state.hours = clamp(num($("in-hours").value, DEFAULTS.hours), 0.5, 80);
+    state.weeks = clamp(num($("in-weeks").value, DEFAULTS.weeks), 0, 40);
+    state.costs = clamp(num($("in-costs").value, DEFAULTS.costs), 0, 1e9);
+    state.day = clamp(num($("in-dayhours").value, DEFAULTS.day), 0.5, 24);
+    state.project = clamp(num($("in-project").value, DEFAULTS.project), 0.5, 5000);
+    var sel = $("cur");
+    if (sel && sel.value) state.cur = sel.value;
+  }
+
+  function writeInputs(){
+    $("in-target").value = state.target;
+    $("in-tax").value = state.tax;
+    $("in-hours").value = state.hours;
+    $("in-weeks").value = state.weeks;
+    $("in-costs").value = state.costs;
+    $("in-dayhours").value = state.day;
+    $("in-project").value = state.project;
+    var sel = $("cur");
+    if (sel) sel.value = state.cur;
+  }
+
+  function save(){
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  function load(){
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return false;
+      var o = JSON.parse(raw);
+      if (!o || typeof o !== "object") return false;
+      state.target = num(o.target, DEFAULTS.target);
+      state.tax = num(o.tax, DEFAULTS.tax);
+      state.hours = num(o.hours, DEFAULTS.hours);
+      state.weeks = num(o.weeks, DEFAULTS.weeks);
+      state.costs = num(o.costs, DEFAULTS.costs);
+      state.day = num(o.day, DEFAULTS.day);
+      state.project = num(o.project, DEFAULTS.project);
+      state.cur = CURRENCIES[o.cur] ? o.cur : DEFAULTS.cur;
+      state.preset = o.preset || "";
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function renderPresets(){
+    var box = $("presets");
+    if (!box) return;
+    box.innerHTML = "";
+    for (var i = 0; i < PRESETS.length; i++) {
+      (function(p){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "preset" + (state.preset === p.key ? " on" : "");
+        b.setAttribute("data-preset", p.key);
+        b.textContent = p.name;
+        b.addEventListener("click", function(){ applyPreset(p.key); });
+        box.appendChild(b);
+      })(PRESETS[i]);
+    }
+  }
+
+  function applyPreset(key){
+    var p = null;
+    for (var i = 0; i < PRESETS.length; i++) if (PRESETS[i].key === key) p = PRESETS[i];
+    if (!p) return;
+    state.target = p.target; state.tax = p.tax; state.hours = p.hours;
+    state.weeks = p.weeks; state.costs = p.costs; state.day = p.day;
+    state.project = p.project; state.preset = p.key;
+    writeInputs();
+    renderPresets();
+    render();
+    save();
+    toast(p.name + " numbers loaded");
+  }
+
+  function renderTiers(model, cur){
+    var t = tierQuote(model, state.project);
+    var box = $("tiers");
+    if (!box) return t;
+    var rows = [
+      {key:"basic", name:"Basic", cls:"", meta:"60% of the scope · 1 revision round"},
+      {key:"standard", name:"Standard", cls:"", meta:"Full scope · 2 revision rounds"},
+      {key:"premium", name:"Premium", cls:"", meta:"130% scope · priority build slot"}
+    ];
+    box.innerHTML = "";
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var q = t[r.key];
+      var mid = (r.key === "standard");
+      var d = document.createElement("div");
+      d.className = "tier" + (mid ? " mid" : "");
+      d.innerHTML =
+        (mid ? '<span class="tag">Most picked</span>' : "") +
+        '<div class="name">' + r.name + '</div>' +
+        '<div class="price">' + fmtMoney(q.price, cur) + '</div>' +
+        '<div class="meta">' + fmtHours(q.hours) + ' h · deposit <b>' + fmtMoney(q.deposit, cur) + '</b><br>' +
+        fmtRate(q.rate, cur) + '/h · ' + r.meta + '</div>';
+      box.appendChild(d);
+    }
+    return t;
+  }
+
+  function renderSens(model, cur){
+    var box = $("sens-rows");
+    if (!box) return;
+    var factors = [0.8, 1.0, 1.2];
+    var html = "";
+    for (var i = 0; i < factors.length; i++) {
+      var h = model.hoursWeek * factors[i];
+      var rate = model.gross / (h * model.weeks);
+      var label = Math.round(factors[i] * 100) + "% of my hours (" + fmtHours(h) + " h/week)";
+      html += "<tr><td>" + label + "</td><td>" + fmtRate(rate, cur) + "/h</td></tr>";
+    }
+    box.innerHTML = html;
+  }
+
+  function render(){
+    var cur = state.cur;
+    var model = computeModel(state);
+    if ($("sym-target")) $("sym-target").textContent = CURRENCIES[cur] || "$";
+    if ($("sym-costs")) $("sym-costs").textContent = CURRENCIES[cur] || "$";
+
+    $("out-hourly").textContent = fmtRate(model.hourly, cur);
+    $("quote-hint").innerHTML = "Quote <b>" + fmtMoney(model.marginHourly, cur) + "/h</b> " +
+      "(+15% for scope creep) — never below the minimum, or the year does not add up.";
+    $("out-day").textContent = fmtMoney(model.dayRate, cur);
+    $("out-day-sub").textContent = fmtHours(state.day) + " h × your rate";
+    $("out-monthly").textContent = fmtMoney(model.monthly, cur);
+    $("out-monthly-sub").textContent = fmtMoney(model.gross, cur) + " a year";
+    $("out-hours").textContent = fmtHours(model.hoursYear);
+    $("out-hours-sub").textContent = "a year · " + fmtHours(model.weeks) + " weeks";
+    $("out-proj-hours").textContent = fmtHours(state.project);
+
+    renderTiers(model, cur);
+    renderSens(model, cur);
+    return model;
+  }
+
+  function onInput(){
+    readInputs();
+    state.preset = "";
+    var chips = document.querySelectorAll ? document.querySelectorAll("#presets .preset") : [];
+    for (var i = 0; i < chips.length; i++) chips[i].className = "preset";
+    render();
+    save();
+  }
+
+  function reset(){
+    state.target = DEFAULTS.target; state.tax = DEFAULTS.tax; state.hours = DEFAULTS.hours;
+    state.weeks = DEFAULTS.weeks; state.costs = DEFAULTS.costs; state.day = DEFAULTS.day;
+    state.project = DEFAULTS.project; state.cur = DEFAULTS.cur; state.preset = "";
+    writeInputs();
+    render();
+    save();
+    toast("Back to the default numbers");
+  }
+
+  function copySummary(){
+    var model = computeModel(state);
+    var tiers = tierQuote(model, state.project);
+    var text = summaryText(state, model, tiers, state.cur);
+    var done = false;
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+        done = true;
+      }
+    } catch (e) {}
+    if (!done) {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        done = !!(document.execCommand && document.execCommand("copy"));
+      } catch (e) {}
+    }
+    toast(done ? "Copied: " + fmtRate(model.hourly, state.cur) + "/h — paste it anywhere"
+               : "Select the numbers above and copy them");
+  }
+
+  function setTheme(mode){
+    var root = document.documentElement;
+    if (root && root.setAttribute) root.setAttribute("data-theme", mode);
+    var btn = $("theme-toggle");
+    if (btn) btn.textContent = (mode === "dark") ? "☀️ Light" : "🌙 Dark";
+    try { localStorage.setItem(STORE_KEY + ":theme", mode); } catch (e) {}
+  }
+
+  function initTheme(){
+    var saved = null;
+    try { saved = localStorage.getItem(STORE_KEY + ":theme"); } catch (e) {}
+    if (!saved) {
+      var mq = (typeof matchMedia === "function") ? matchMedia("(prefers-color-scheme: dark)") : null;
+      saved = (mq && mq.matches) ? "dark" : "light";
+    }
+    setTheme(saved === "dark" ? "dark" : "light");
+  }
+
+  function init(){
+    var restored = load();
+    writeInputs();
+    renderPresets();
+    render();
+    if (restored) toast("Welcome back — your numbers were restored");
+
+    var ids = ["in-target", "in-tax", "in-hours", "in-weeks", "in-costs", "in-dayhours", "in-project"];
+    for (var i = 0; i < ids.length; i++) {
+      var el = $(ids[i]);
+      if (el && el.addEventListener) el.addEventListener("input", onInput);
+    }
+    var sel = $("cur");
+    if (sel && sel.addEventListener) sel.addEventListener("change", onInput);
+
+    var cb = $("copy-btn");
+    if (cb && cb.addEventListener) cb.addEventListener("click", copySummary);
+    var rb = $("reset-btn");
+    if (rb && rb.addEventListener) rb.addEventListener("click", reset);
+    var tb = $("theme-toggle");
+    if (tb && tb.addEventListener) tb.addEventListener("click", function(){
+      var now = (document.documentElement.getAttribute("data-theme") === "dark") ? "light" : "dark";
+      setTheme(now);
+    });
+
+    initTheme();
+  }
+
+  if (document.readyState === "loading" && document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
